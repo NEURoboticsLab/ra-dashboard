@@ -1,8 +1,8 @@
-create database logs;
-grant all privileges on logs.* TO 'core';
-use logs;
-create table logs
-(t_insert timestamp(3) default current_timestamp(3),
+create database telemetry;
+grant all privileges on telemetry.* TO 'core';
+use telemetry;
+create table telemetry
+(epoch timestamp(3) default current_timestamp(3),
  battery_pack_voltage double not null,
  bus_voltage double not null,
  bus_current double not null,
@@ -11,4 +11,4 @@ create table logs
  motor_temprature double not null,
  esc_temprature double not null,
  odometer  double not null,
- primary key (t_insert));
+ primary key (epoch));

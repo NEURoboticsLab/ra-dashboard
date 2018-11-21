@@ -13,7 +13,7 @@ def now():
 db = MySQLdb.connect(host="127.0.0.1",
                      user="core",
                      passwd="esn95384",
-                     db="logs")
+                     db="telemetry")
 
 cur = db.cursor()
 
@@ -32,7 +32,7 @@ def data():
 def insert(d):
     cols = d.keys()
     vals = [str(x) for x in d.values()]
-    sql = "INSERT INTO logs (%s) VALUES(%s);" % (",".join(cols), ",".join(vals))
+    sql = "INSERT INTO telemetry (%s) VALUES(%s);" % (",".join(cols), ",".join(vals))
     cur.execute(sql)
     db.commit()
 

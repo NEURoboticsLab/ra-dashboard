@@ -1,32 +1,38 @@
 DIR = $(shell pwd)
 
-GRAFANA_RUN = docker run --rm -d \
-		-p 3000:3000 \
-                --name=ra-dashboard \
-		--user=0 \
-                -e "GF_SECURITY_ADMIN_PASSWORD=esn95384" \
-                --link ra-database \
-		-t -v "${DIR}/grafana":/var/lib/grafana grafana/grafana
-
-MYSQL_RUN = docker run --rm -d \
+MYSQL = "ra-database"
+MYSQL_DATA = "mysql/"
+MYSQL_IMAGE = "mysql/mysql-server:5.7"
+RUN_MYSQL = docker run --rm -d \
 		-p 3306:3306 \
-                --name=ra-database \
+                --name=${MYSQL} \
 		--user=0 \
                 -e MYSQL_USER=core \
                 -e MYSQL_PASSWORD=esn95384 \
                 -e MYSQL_ROOT_PASSWORD=esn95384 \
-		-t -v "${DIR}"/mysql:/var/lib/mysql \
-		mysql/mysql-server:5.7
+		-t -v "${DIR}"/${MYSQL_DATA}:/var/lib/mysql \
+		${MYSQL_IMAGE}
 
-.PHONY: run stop mysql init clean
+GRAFANA = "ra-dashboard"
+GRAFANA_DATA = "grafana/"
+GRAFANA_IMAGE = "grafana/grafana"
+RUN_GRAFANA = docker run --rm -d \
+		-p 3000:3000 \
+                --name=${GRAFANA} \
+		--user=0 \
+                -e "GF_SECURITY_ADMIN_PASSWORD=esn95384" \
+                --link ${MYSQL} \
+		-t -v "${DIR}"/${GRAFANA_DATA}:/var/lib/grafana ${GRAFANA_IMAGE}
 
-run:
-	sudo ${MYSQL_RUN}
-	sudo ${GRAFANA_RUN}
+.PHONY: start stop mysql init clean
+
+start:
+	sudo ${RUN_MYSQL}
+	sudo ${RUN_GRAFANA}
 
 stop:
-	sudo docker stop ra-dashboard
-	sudo docker stop ra-database
+	sudo docker stop ${GRAFANA}
+	sudo docker stop ${MYSQL}
 
 mysql:
 	mysql --host=127.0.0.1 --user=core --password=esn95384
@@ -34,14 +40,15 @@ mysql:
 MYSQL_INIT = $(shell cat mysql_init.sql)
 
 init:
-	sudo docker pull mysql/mysql-server:5.7
-	sudo docker pull grafana/grafana
+	sudo docker system prune
+	sudo docker pull ${MYSQL_IMAGE}
+	sudo docker pull ${GRAFANA_IMAGE}
 	sudo apt-get install python-mysqldb
-	mkdir -p grafana
-	mkdir -p mysql
-	sudo ${MYSQL_RUN}
-	sudo docker exec -it ra-database mysql -uroot -p -e "${MYSQL_INIT}"
-	sudo docker stop ra-database
+	mkdir -p ${GRAFANA_DATA}
+	mkdir -p ${MYSQL_DATA}
+	sudo ${RUN_MYSQL}
+	sudo docker exec -it ${MYSQL} mysql -uroot -p -e "${MYSQL_INIT}"
+	sudo docker stop ${MYSQL}
 
 clean:
-	rm -rf grafana/ mysql/
+	sudo rm -rf ${GRAFANA_DATA} ${MYSQL_DATA}
