@@ -16,7 +16,7 @@ MYSQL_RUN = docker run --rm -d \
                 -e MYSQL_PASSWORD=esn95384 \
                 -e MYSQL_ROOT_PASSWORD=esn95384 \
 		-t -v "${DIR}"/mysql:/var/lib/mysql \
-		mysql/mysql-server:5.5
+		mysql/mysql-server:5.7
 
 .PHONY: run stop mysql init clean
 
@@ -34,7 +34,7 @@ mysql:
 MYSQL_INIT = $(shell cat mysql_init.sql)
 
 init:
-	sudo docker pull mysql/mysql-server:5.5
+	sudo docker pull mysql/mysql-server:5.7
 	sudo docker pull grafana/grafana
 	sudo apt-get install python-mysqldb
 	mkdir -p grafana

@@ -2,7 +2,7 @@ create database logs;
 grant all privileges on logs.* TO 'core';
 use logs;
 create table logs
-(t_insert timestamp default current_timestamp,
+(t_insert timestamp(3) default current_timestamp(3),
  battery_pack_voltage double not null,
  bus_voltage double not null,
  bus_current double not null,
