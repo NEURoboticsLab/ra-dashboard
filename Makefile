@@ -18,6 +18,8 @@ MYSQL_RUN = docker run --rm -d \
 		-t -v "${DIR}"/mysql:/var/lib/mysql \
 		mysql/mysql-server:5.5
 
+MYSQL_CONN = mysql --host=127.0.0.1 --user=core --password=esn95384
+
 .PHONY: run stop mysql
 
 run:
@@ -29,12 +31,16 @@ stop:
 	docker stop ra-database
 
 mysql:
-	mysql --host=127.0.0.1 --user=core --password=esn95384
+	${MYSQL_CONN}
+
+mysql-init:
+	${MYSQL_CONN} < mysql_init.sql
 
 mysql-root:
 	docker exec -it ra-database mysql -uroot -p
 
 init:
+	sudo apt-get install python-mysqldb
 	mkdir -p grafana
 	mkdir -p mysql
 
