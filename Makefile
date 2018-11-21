@@ -18,31 +18,30 @@ MYSQL_RUN = docker run --rm -d \
 		-t -v "${DIR}"/mysql:/var/lib/mysql \
 		mysql/mysql-server:5.5
 
-MYSQL_CONN = mysql --host=127.0.0.1 --user=core --password=esn95384
-
-.PHONY: run stop mysql
+.PHONY: run stop mysql init clean
 
 run:
-	${MYSQL_RUN}
-	${GRAFANA_RUN}
+	sudo ${MYSQL_RUN}
+	sudo ${GRAFANA_RUN}
 
 stop:
-	docker stop ra-dashboard
-	docker stop ra-database
+	sudo docker stop ra-dashboard
+	sudo docker stop ra-database
 
 mysql:
-	${MYSQL_CONN}
+	mysql --host=127.0.0.1 --user=core --password=esn95384
 
-mysql-init:
-	${MYSQL_CONN} < mysql_init.sql
-
-mysql-root:
-	docker exec -it ra-database mysql -uroot -p
+MYSQL_INIT = $(shell cat mysql_init.sql)
 
 init:
+	sudo docker pull mysql/mysql-server:5.5
+	sudo docker pull grafana/grafana
 	sudo apt-get install python-mysqldb
 	mkdir -p grafana
 	mkdir -p mysql
+	sudo ${MYSQL_RUN}
+	sudo docker exec -it ra-database mysql -uroot -p -e "${MYSQL_INIT}"
+	sudo docker stop ra-database
 
 clean:
 	rm -rf grafana/ mysql/

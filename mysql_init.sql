@@ -1,3 +1,5 @@
+create database logs;
+grant all privileges on logs.* TO 'core';
 use logs;
 create table logs
 (t_insert timestamp default current_timestamp,
