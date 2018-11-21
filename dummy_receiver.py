@@ -21,7 +21,7 @@ def data():
     d = {}
     d["battery_pack_voltage"] = 100 + random.randint(-10,10)
     d["bus_voltage"] = 110 + random.randint(-10,10)
-    d["bus_current"] = 1 + random.randint(-1,1)
+    d["bus_current"] = 10 + random.randint(-1,1)
     d["vehicle_velocity"] = 30 + random.randint(-5,5)
     d["motor_velocity"] = 100  + random.randint(-100,100)
     d["motor_temprature"] = 30 + random.randint(-5,5)
