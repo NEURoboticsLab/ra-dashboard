@@ -43,7 +43,7 @@ init:
 	sudo docker system prune
 	sudo docker pull ${MYSQL_IMAGE}
 	sudo docker pull ${GRAFANA_IMAGE}
-	sudo apt-get install python-mysqldb
+	sudo apt-get install python-mysqldb python3-pymysql
 	mkdir -p ${GRAFANA_DATA}
 	mkdir -p ${MYSQL_DATA}
 	sudo ${RUN_MYSQL}
